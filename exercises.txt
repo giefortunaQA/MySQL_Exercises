@@ -1,0 +1,146 @@
+1.) Using COUNT, get the number of cities in the USA.
+
+select count(name) from city where CountryCode='USA';
+
+2.)Find out the population and life expectancy for people in Argentina.
+
+select sum(population), LifeExpectancy from country where Name='Argentina';
+
+3.) Using IS NOT NULL, ORDER BY, and LIMIT, which country has the highest life expectancy?
+
+select name, LifeExpectancy from country where LifeExpectancy is not null order by LifeExpectancy DESC limit 1;
+
+4.) Using JOIN ... ON, find the capital city of Spain.
+
+select city.name from city join country on country.capital=city.id where country.name='Spain';
+
+5.) Using JOIN ... ON, list all the languages spoken in the Southeast Asia region.
+
+select cl.Language from countrylanguage cl join country c on cl.CountryCode=c.code where c.region='Southeast Asia';
+
+6.) Using a single query, list 25 cities around the world that start with the letter F.
+
+select name from city where name like 'F%' limit 25;
+
+7.)Using COUNT and JOIN ... ON, get the number of cities in China.
+
+select count(ct.name) from city ct join country c on ct.CountryCode=c.code where c.name='China';
+
+8.)Using IS NOT NULL, ORDER BY, and LIMIT, which country has the lowest population? Discard non-zero populations.
+
+select Name, Population from country where Population is not null and where Population !=0 order by Population limit 1;
+
+9.) Using aggregate functions, return the number of countries the database contains.
+
+select count(name) from country;
+
+10.) What are the top ten largest countries by area?
+
+select name, SurfaceArea from country order by SurfaceArea desc limit 10;
+
+11.)List the five largest cities by population in Japan.
+
+select ct.name from city ct join country c on ct.CountryCode=c.code where c.Name='Japan' order by ct.population desc limit 5;
+
+
+12.)List the names and country codes of every country with Elizabeth II as its Head of State. You will need to fix the mistake first!
+
+update country set headofstate='Elizabeth II' where headofstate='Elisabeth II'; #fixed mistake
+
+select name,code from country where headofstate='Elizabeth II';
+
+13.)List the top ten countries with the smallest population-to-area ratio. Discard any countries with a ratio of 0.
+
+select name from country where surfacearea is null or surfacearea=0; #checking if there are zero surface areas i.e. zero denominator <- bad
+
+select name, population/surfacearea as ratio from country where population !=0  order by ratio limit 5;
+
+14.)List every unique world language.
+
+select distinct language from countrylanguage;
+
+15.)List the names and GNP of the world's top 10 richest countries.
+
+select name, gnp from country order by gnp desc limit 10;
+
+16.) List the names of, and number of languages spoken by, the top ten most multilingual countries.
+
+select c.name, count(cl.language) as total_languages_spoken from country c join countrylanguage cl where c.code=cl.countrycode group by cl.countrycode;
+
+17.)List every country where over 50% of its population can speak German.
+
+select distinct c.name, cl.percentage as German_speakers from country c join countrylanguage cl on c.code=cl.countrycode where cl.language='German' and cl.percentage>50;
+
+18.)Which country has the worst life expectancy? Discard zero or null values.
+
+select name from country where lifeexpectancy is not null or lifeexpectancy!=0 order by lifeexpectancy limit 1;
+
+19.)List the top three most common government forms.
+select governmentform, count(name) as num_countries from country group by governmentform order by num_countries desc limit 3;
+
+20.)How many countries have gained independence since records began?
+
+select count(name) from country where indepyear>0; #can interpret as >= if question means "the same year as records began and onwards"
+
+########################### SAKILA ###################
+1. List all actors.
+select first_name, last_name from actor;
+
+2. Find the surname of the actor with the forename 'John'.
+select last_name from actor where first_name='John';
+
+3. Find all actors with surname 'Neeson'.
+select first_name, last_name from actor where last_name='Neeson';
+
+4. Find all actors with ID numbers divisible by 10
+select first_name, last_name, actor_id from actor where (actor_id%10)=0;
+
+5. What is the description of the movie with an ID of 100?
+select film_id, description from film where film_id=100;
+
+6.Find every R-rated movie.
+select title from film where rating='R';
+
+7.Find every non-R-rated movie.
+select title from film where rating!='R';
+
+8. Find the ten shortest movies.
+select title, length from film order by length limit 10;
+
+9. Find the movies with the longest runtime, without using LIMIT.
+select title, length from film where length=( select max(length) from film);
+
+10. Find all movies that have deleted scenes.
+select title from film where special_features='Deleted Scenes';
+
+11. Using HAVING, reverse-alphabetically list the last names that are not repeated.
+select last_name as distinct_surnames from actor group by last_name having count(last_name)=1 order by last_name desc;
+
+12. Using HAVING, list the last names that appear more than once, from highest to lowest frequency.
+select last_name as repeated_surnames from actor group by last_name having count(last_name)!=1 order by count(last_name) desc;
+
+13. Which actor has appeared in the most films?
+
+select a.first_name,a.last_name, count(fa.film_id) as num_movies from actor a join film_actor fa where a.actor_id=fa.actor_id group by fa.actor_id order by num_movies desc limit 1;
+
+
+14. When is 'Academy Dinosaur' due?
+inventory_id - inventory primary
+film_id- film primary
+return_date- rental
+
+select r.return_date, i.film_id from rental r join inventory i where i.inventory_id=r.inventory_id;
+ join film f where f.film_id=i.film_id and f.title='Academy Dinosaur';
+
+
+What is the average runtime of all films?
+List the average runtime for every film category.
+List all movies featuring a robot.
+How many movies were released in 2010?
+Find the titles of all the horror movies.
+List the full name of the staff member with the ID of 2.
+List all the movies that Fred Costner has appeared in.
+How many distinct countries are there?
+List the name of every language in reverse-alphabetical order.
+List the full names of every actor whose surname ends with '-son' in alphabetical order by their forename.
+Which category contains the most films?

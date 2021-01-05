@@ -54,7 +54,7 @@ select name,code from country where headofstate='Elizabeth II';
 
 select name from country where surfacearea is null or surfacearea=0; #checking if there are zero surface areas i.e. zero denominator <- bad
 
-select name, population/surfacearea as ratio from country where population !=0  order by ratio limit 5;
+select name, population/surfacearea as ratio from country where population !=0  order by ratio limit 10;
 
 14.)List every unique world language.
 
